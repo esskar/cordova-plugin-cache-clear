@@ -4,9 +4,8 @@ Cache Clear
 This is a WebView cache plugin for Cordova 6.1.1+ supporting Android (>=4.1) and iOS(>=6.0).
 It allows to clear the cordova webview cache.
 
-There is one method:
-
-* CacheClear(successCallback, errorCallback)
+* cache.clearCache(successCallback, errorCallback)
+* cache.clearAll(successCallback, errorCallback)
 
 Installation
 ======
@@ -26,7 +25,9 @@ document.addEventListener('deviceready', function() {
     var error = function(status) {
         alert('Error: ' + status);
     };
-    window.CacheClear(success, error);
+    window.cache.clearCache(success, error);
+    // - or -
+    window.cache.clearAll(success, error);
 });
 ```
 

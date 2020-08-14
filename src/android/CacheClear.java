@@ -10,6 +10,8 @@ import org.apache.cordova.PluginResult;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.util.Log;
+import android.webkit.CookieManager;
+import android.webkit.WebStorage;
 
 @TargetApi(19)
 public class CacheClear extends CordovaPlugin {
@@ -23,22 +25,37 @@ public class CacheClear extends CordovaPlugin {
         Log.v(LOG_TAG, MESSAGE_TASK);
 
         if (action.equals("task")) {
-            task(callbackContext);
+            task(callbackContext, args.getBoolean(0));
             return true;
         }
 
         return false;
     }
 
-    public void task(CallbackContext callbackContext) {
+    public void task(CallbackContext callbackContext, boolean clearAll) {
         final CacheClear self = this;
         final CallbackContext callback = callbackContext;
 
         cordova.getActivity().runOnUiThread(new Runnable() {
             public void run() {
                 try {
-                    // clear the cache
-                    self.webView.clearCache(true);
+                    if (clearAll) {
+                        // Clear all the Application Cache, Web SQL Database and the HTML5 Web Storage
+                        WebStorage.getInstance().deleteAllData();
+
+                        // Clear all the cookies
+                        CookieManager.getInstance().removeAllCookies(null);
+                        CookieManager.getInstance().flush();
+
+                        self.webView.clearCache(true);
+                        // self.webView.clearFormData();
+                        self.webView.clearHistory();
+                        // self.webView.clearSslPreferences();
+                    } else {
+                        // clear the cache
+                        self.webView.clearCache(true);
+                    }
+
                     // send success result to cordova
                     PluginResult result = new PluginResult(PluginResult.Status.OK);
                     result.setKeepCallback(false);
